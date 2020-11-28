@@ -58,8 +58,7 @@ func (d *Dump) RestoreFrom(fileName string, options ...string) error {
 		fmt.Sprintf(`-p%v`, d.postgresPort),
 		fmt.Sprintf(`-d%v`, d.postgresDatabase),
 		fmt.Sprintf(`-U%v`, d.postgresUsername),
-		"-Fc",
-		fmt.Sprintf(`-f%v`, fileName))
+		fmt.Sprintf(`%v`, fileName))
 
 	cmd := exec.Command("pg_restore", options...)
 
