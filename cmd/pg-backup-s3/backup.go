@@ -104,6 +104,7 @@ func (b *backupCmdOptions) RunE(cmd *cobra.Command, args []string) error {
 	}
 
 	log.Println("Encrypting backup to", path.Join(tmpDir, "dump.tar.gz.enc"))
+	// TODO: Fix encryption key!
 	if err := crypt.EncryptFile(path.Join(tmpDir, "dump.tar.gz"), path.Join(tmpDir, "dump.tar.gz.enc"), b.postgresPassword); err != nil {
 		return err
 	}
