@@ -61,7 +61,7 @@ func (d *Dump) RestoreFrom(fileName string, options ...string) error {
 		"-Fc",
 		fmt.Sprintf(`-f%v`, fileName))
 
-	cmd := exec.Command("-g_restore", options...)
+	cmd := exec.Command("pg_restore", options...)
 
 	var stdout bytes.Buffer
 	cmd.Stdout = &stdout
