@@ -102,7 +102,7 @@ func (r *restoreCmdOptions) RunE(cmd *cobra.Command, args []string) error {
 
 	log.Println("Decrypting backup to", path.Join(tmpDir, "dump.tar.gz"))
 	// TODO: Fix encryption key!
-	if err := crypt.DecryptFile(path.Join(tmpDir, "dump.tar.gz"), path.Join(tmpDir, "dump.tar.gz"), r.postgresPassword); err != nil {
+	if err := crypt.DecryptFile(path.Join(tmpDir, "dump.tar.gz.enc"), path.Join(tmpDir, "dump.tar.gz"), r.postgresPassword); err != nil {
 		return err
 	}
 
@@ -136,8 +136,7 @@ func (r *restoreCmdOptions) downloadTo(name, filePath string) error {
 		return err
 	}
 
-	// Open the file for use
-	file, err := os.Open(filePath)
+	file, err := os.Create(filePath)
 	if err != nil {
 		return err
 	}
