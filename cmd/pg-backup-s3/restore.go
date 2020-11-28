@@ -95,7 +95,7 @@ func (r *restoreCmdOptions) RunE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	log.Println("Downloafing backup to", path.Join(tmpDir, "dump.tar.gz.enc"))
+	log.Println("Downloading backup to", path.Join(tmpDir, "dump.tar.gz.enc"))
 	if err := r.downloadTo(r.name, path.Join(tmpDir, "dump.tar.gz.enc")); err != nil {
 		return err
 	}
