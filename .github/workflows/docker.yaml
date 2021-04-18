@@ -54,7 +54,7 @@ jobs:
           docker manifest create $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:amd64-$GITHUB_SHA $DOCKER_PREFIX:arm32v7-$GITHUB_SHA $DOCKER_PREFIX:arm64v8-$GITHUB_SHA
           docker manifest annotate $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:amd64-$GITHUB_SHA --arch amd64
           docker manifest annotate $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:arm32v7-$GITHUB_SHA --arch arm --variant v7
-          docker manifest annotate $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:arm64v8-$GITHUB_SHA --arch arm64 --variant armv8
+          docker manifest annotate $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:arm64v8-$GITHUB_SHA --arch arm64 --variant v8
           docker manifest push $DOCKER_PREFIX:$GITHUB_SHA
         env:
           DOCKER_PREFIX: quay.io/mect/pg-backup-s3
@@ -64,7 +64,7 @@ jobs:
           docker manifest create $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:amd64-$GITHUB_SHA $DOCKER_PREFIX:arm32v7-$GITHUB_SHA $DOCKER_PREFIX:arm64v8-$GITHUB_SHA
           docker manifest annotate $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:amd64-$GITHUB_SHA --arch amd64
           docker manifest annotate $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:arm32v7-$GITHUB_SHA --arch arm --variant v7
-          docker manifest annotate $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:arm64v8-$GITHUB_SHA --arch arm64 --variant armv8
+          docker manifest annotate $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:arm64v8-$GITHUB_SHA --arch arm64 --variant v8
           docker manifest push $DOCKER_PREFIX:$GITHUB_SHA
         env:
           DOCKER_PREFIX: ghcr.io/mect/pg-backup-s3
