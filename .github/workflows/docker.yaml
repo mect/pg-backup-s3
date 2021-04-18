@@ -24,13 +24,18 @@ jobs:
           if [[ "$ARCH" == "arm32v7" ]]; then export GOARCH="arm"; fi
           if [[ "$ARCH" == "arm64v8" ]]; then export GOARCH="arm64"; fi
           docker build . --build-arg="ARCH=$ARCH" --build-arg="GOARCH=$GOARCH" --file Dockerfile --tag quay.io/mect/pg-backup-s3:${{ matrix.arch }}-$GITHUB_SHA
+          docker tag quay.io/mect/pg-backup-s3:${{ matrix.arch }}-$GITHUB_SHA ghcr.io/mect/pg-backup-s3:${{ matrix.arch }}-$GITHUB_SHA
         env:
           ARCH: ${{ matrix.arch }}
           DOCKER_CLI_EXPERIMENTAL: enabled
       - name: Log in to registry
         run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login quay.io -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Log in to GHCR registry
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
       - name: Push image
-        run: docker push quay.io/mect/pg-backup-s3:${{ matrix.arch }}-$GITHUB_SHA
+        run: |
+          docker push quay.io/mect/pg-backup-s3:${{ matrix.arch }}-$GITHUB_SHA
+          docker push ghcr.io/mect/pg-backup-s3:${{ matrix.arch }}-$GITHUB_SHA
   publish-manifest:
     runs-on: ubuntu-latest
     needs: [build]
@@ -42,6 +47,8 @@ jobs:
           docker run --rm --privileged multiarch/qemu-user-static:register
       - name: Log in to registry
         run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login quay.io -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Log in to GHCR registry
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
       - name: Create Manifest
         run: |
           docker manifest create $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:amd64-$GITHUB_SHA $DOCKER_PREFIX:arm32v7-$GITHUB_SHA $DOCKER_PREFIX:arm64v8-$GITHUB_SHA
@@ -51,4 +58,14 @@ jobs:
           docker manifest push $DOCKER_PREFIX:$GITHUB_SHA
         env:
           DOCKER_PREFIX: quay.io/mect/pg-backup-s3
+          DOCKER_CLI_EXPERIMENTAL: enabled
+      - name: Create Manifest for GHCR
+        run: |
+          docker manifest create $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:amd64-$GITHUB_SHA $DOCKER_PREFIX:arm32v7-$GITHUB_SHA $DOCKER_PREFIX:arm64v8-$GITHUB_SHA
+          docker manifest annotate $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:amd64-$GITHUB_SHA --arch amd64
+          docker manifest annotate $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:arm32v7-$GITHUB_SHA --arch arm --variant v7
+          docker manifest annotate $DOCKER_PREFIX:$GITHUB_SHA $DOCKER_PREFIX:arm64v8-$GITHUB_SHA --arch arm64 --variant armv8
+          docker manifest push $DOCKER_PREFIX:$GITHUB_SHA
+        env:
+          DOCKER_PREFIX: ghcr.io/mect/pg-backup-s3
           DOCKER_CLI_EXPERIMENTAL: enabled
