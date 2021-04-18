@@ -1,3 +1,4 @@
+ARG pg
 FROM golang:1.15-alpine as build
 
 COPY ./ /go/src/github.com/mect/pg-backup-s3
@@ -5,7 +6,8 @@ COPY ./ /go/src/github.com/mect/pg-backup-s3
 WORKDIR /go/src/github.com/mect/pg-backup-s3
 RUN go build -o pg-backup-s3 ./cmd/pg-backup-s3
 
-FROM postgres:12-alpine
+ARG pg
+FROM postgres:${pg}-alpine
 
 COPY --from=build /go/src/github.com/mect/pg-backup-s3/pg-backup-s3 /usr/local/bin/pg-backup-s3
 
