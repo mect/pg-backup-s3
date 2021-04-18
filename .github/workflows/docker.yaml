@@ -7,7 +7,7 @@ jobs:
   build:
     strategy:
       matrix:
-        pg: [11,12, 13]
+        pg: ["11", "12", "13"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -27,6 +27,6 @@ jobs:
       - name: Log in to GHCR registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
       - name: Build the Docker image
-        run: docker buildx build . --file Dockerfile --build-arg PG={{$matrix.pg}} --tag quay.io/mect/pg-backup-s3:{{$matrix.pg}}-$GITHUB_SHA --push --platform "linux/amd64,linux/arm64,linux/arm"
+        run: docker buildx build . --file Dockerfile --build-arg PG=${{matrix.pg}} --tag quay.io/mect/pg-backup-s3:${{matrix.pg}}-$GITHUB_SHA --push --platform "linux/amd64,linux/arm64,linux/arm"
       - name: Build the Docker image
-        run: docker buildx build . --file Dockerfile --build-arg PG={{$matrix.pg}} --tag ghcr.io/mect/pg-backup-s3:{{$matrix.pg}}-$GITHUB_SHA --push --platform "linux/amd64,linux/arm64,linux/arm"
+        run: docker buildx build . --file Dockerfile --build-arg PG=${{matrix.pg}} --tag ghcr.io/mect/pg-backup-s3:${{matrix.pg}}-$GITHUB_SHA --push --platform "linux/amd64,linux/arm64,linux/arm"
