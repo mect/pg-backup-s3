@@ -28,7 +28,8 @@ func TestEncryptFile(t *testing.T) {
 		name        string
 		encryptArgs args
 		decryptArgs args
-		wantErr     bool
+		wantErrEnc  bool
+		wantErrDec  bool
 	}{
 		{
 			name: "encrypt test file",
@@ -42,16 +43,29 @@ func TestEncryptFile(t *testing.T) {
 				outPath: path.Join(tmpDir, "decrypttest1"),
 				pass:    "test",
 			},
-			wantErr: false,
+		},
+		{
+			name: "Fail to decrypt test file with incorrect pass",
+			encryptArgs: args{
+				path:    path.Join(tmpDir, "plaintext1"),
+				outPath: path.Join(tmpDir, "enctest1"),
+				pass:    "test",
+			},
+			decryptArgs: args{
+				path:    path.Join(tmpDir, "enctest1"),
+				outPath: path.Join(tmpDir, "decrypttest1"),
+				pass:    "badtest",
+			},
+			wantErrDec: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := EncryptFile(tt.encryptArgs.path, tt.encryptArgs.outPath, tt.encryptArgs.pass); (err != nil) != tt.wantErr {
-				t.Errorf("EncryptFile() error = %v, wantErr %v", err, tt.wantErr)
+			if err := EncryptFile(tt.encryptArgs.path, tt.encryptArgs.outPath, tt.encryptArgs.pass); (err != nil) != tt.wantErrEnc {
+				t.Errorf("EncryptFile() error = %v, wantErr %v", err, tt.wantErrEnc)
 			}
-			if err := DecryptFile(tt.decryptArgs.path, tt.decryptArgs.outPath, tt.decryptArgs.pass); (err != nil) != tt.wantErr {
-				t.Errorf("DecryptFile() error = %v, wantErr %v", err, tt.wantErr)
+			if err := DecryptFile(tt.decryptArgs.path, tt.decryptArgs.outPath, tt.decryptArgs.pass); (err != nil) != tt.wantErrDec {
+				t.Errorf("DecryptFile() error = %v, wantErr %v", err, tt.wantErrDec)
 			}
 			input, err := ioutil.ReadFile(tt.encryptArgs.path)
 			if err != nil {
